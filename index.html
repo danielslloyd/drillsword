@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Drillsword</title>
+  <meta name="description" content="">
+  <meta name="author" content="Dan Lloyd">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="https://fonts.googleapis.com/css?family=Amiri:400,300,600" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=GFS+Didot:400,300,600" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Frank+Ruhl+Libre:400,300,600" rel="stylesheet" type="text/css">
+  <!-- <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css"> -->
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
+  
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/sword.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <div class="row" style="margin-top: 25%">
+      <h1 id="header">Drillsword</h1>
+    </div>
+    <div class="row">
+      <div class="one column">
+        <input class="button-primary" type="image" src="images/refresh-24px.svg" alt="submit" id="refresh" width="38" height="38">
+      </div>
+      <div class="one column" hidden>
+        <h5 id="timer">0</h5>
+      </div>
+      <div class="one column" hidden>
+        <h5 id="career">0</h5>
+      </div>
+      <div class="seven columns" id="diff_div">
+        <input class="button-primary" type="submit" value="Easy" id="easy">
+        <input class="button" type="submit" value="Medium" id="medium">
+        <input class="button" type="submit" value="Hard" id="hard">
+        <input class="button" type="submit" value="Κοινή" id="greek">
+        <input class="button" type="submit" value="יהודית" id="hebrew">
+      </div>
+      <div class="one column">
+        <input class="button-primary" type="image" src="images/share-24px.svg" alt="submit" id="share" width="38" height="38">
+      </div>
+    </div>
+    <div class="row">
+      <div class="one-half column">
+        <h4 id="answer"></h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="seven columns">
+        <h3 id="v1"></h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="three columns">
+        <h6 id="src"></h6>
+      </div>
+    </div>
+    <div class="row">
+      <h4 id="inp">
+        <div class="three columns">
+          <label for="exampleRecipientInput">Book</label>
+          <select class="u-full-width" id="bookInput">
+          </select>
+        </div>
+        <div class="two columns">
+          <label for="exampleRecipientInput">Chapter</label>
+          <select class="u-full-width" id="chapterInput">
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="two columns">
+          <label for="exampleRecipientInput">Verse</label>
+          <select class="u-full-width" id="verseInput">
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="two columns">
+          <label id ="pad1" for="exampleRecipientInput">&#8193</label>
+          <input class="button-primary" type="submit" value="&#9654" id="submit">
+        </div>
+      </h4>
+    </div>
+    <div class="row">
+      <div class="nine columns" id="rec_div">
+    <!-- </div> padding-top = 20> -->
+  <!-- padding-right: 30px;
+  padding-bottom: 50px;
+  padding-left: 80px; -->
+    
+      <div class="two columns">
+        <input class="button-primary" type="image" src="" id="rec_img" height="75" href="">
+      </div>
+      <!-- <a href="" id="rec_img_div">
+        <img src="" alt="" style="height:75px;" id="rec_img">
+      </a> -->
+      <div class="five columns">
+        <h6 id ="rec_title" for="exampleRecipientInput" height="75"></h6>
+      </div>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="bible_obj.js"></script>
+  <script type="text/javascript" src="rec_obj.js"></script>
+  <script type="text/javascript" src="easy_med.js"></script>
+  <!--<script type="text/javascript" src="greek.js"></script>-->
+  <!--https://sblgnt.com/download/
+  "You must always attribute quotations from the SBLGNT. If you quote fewer than 100 verses of the SBLGNT in a single print or electronic work, you can attribute it by simply adding "SBLGNT" after the quotation.
+  Use of 100 or more verses in a single work must be accompanied by the following statement:
+  "Scripture quotations marked SBLGNT are from the SBL Greek New Testament. Copyright © 2010 Society of Biblical Literature and Logos Bible Software.""
+  With online or electronic quotations, link "SBLGNT" and "SBL Greek New Testament" to http://sblgnt.com, "Society of Biblical Literature" to http://www.sbl-site.org, and "Logos Bible Software" to http://www.logos.com.
+  -->
+  <!--<script type="text/javascript" src="hebrew.js"></script>-->
+                        <!--type="text/javascript">-->
+  <script type="module"> 
+  var verse = {};
+  var timer = {};
+  var careerScore = 0;
+  var diff = 0;
+  var grkLoad = false;
+  var hbrLoad = false;
+  var grek = {};
+  var hebr = {};
+  // better scoring (use timer?) ; easy/med/hard ; playlists ; true random? ; fix cookies
+
+  window.onload = (event) => {
+    var param = window.location.search;
+    diff = 1;
+    console.log(param);
+    var pos = param.search("/?v=");
+    if (pos > -1 && isValid(unhash(param.slice(pos+2,pos+10)))) {
+      initialize(unhash(param.slice(pos+2,pos+10)));
+    }
+    else {
+      initialize();
+    }
+  };
+  
+  var diff1 = document.getElementById("easy");
+  var diff2 = document.getElementById("medium");
+  var diff3 = document.getElementById("hard");
+  var diff4 = document.getElementById("greek");
+  var diff5 = document.getElementById("hebrew");
+
+  diff1.onclick = function() {
+    if (diff!=1)
+    {
+      diff=1;
+      document.getElementById("easy").className = "button-primary";
+      document.getElementById("medium").className = "button";
+      document.getElementById("hard").className = "button";
+      document.getElementById("greek").className = "button";
+      document.getElementById("hebrew").className = "button";
+      initialize();
+      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+    }
+  };
+
+  diff2.onclick = function() {
+    if (diff!=2)
+    {
+      diff=2;
+      document.getElementById("easy").className = "button";
+      document.getElementById("medium").className = "button-primary";
+      document.getElementById("hard").className = "button";
+      document.getElementById("greek").className = "button";
+      document.getElementById("hebrew").className = "button";
+      initialize();
+      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+    }
+  };
+  
+  diff3.onclick = function() {
+    if (diff!=3)
+    {
+      diff=3;
+      document.getElementById("easy").className = "button";
+      document.getElementById("medium").className = "button";
+      document.getElementById("hard").className = "button-primary";
+      document.getElementById("greek").className = "button";
+      document.getElementById("hebrew").className = "button";
+      initialize();
+      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+    }
+  };
+  
+  diff4.onclick = function() {
+    if (diff!=4)
+    {
+      diff=4;
+      if (grek = {}) {
+          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+          grekload();
+      }
+      document.getElementById("easy").className = "button";
+      document.getElementById("medium").className = "button";
+      document.getElementById("hard").className = "button";
+      document.getElementById("greek").className = "button-primary";
+      document.getElementById("hebrew").className = "button";
+      document.getElementById('v1').style.fontFamily = "GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+    }
+  };
+  
+  diff5.onclick = function() {
+    if (diff!=5)
+    {
+      diff=5;
+      if (hebr = {}) {
+          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+          hebrload();
+      }
+      document.getElementById("easy").className = "button";
+      document.getElementById("medium").className = "button";
+      document.getElementById("hard").className = "button";
+      document.getElementById("greek").className = "button";
+      document.getElementById("hebrew").className = "button-primary";
+      document.getElementById('v1').style.fontFamily = "Frank Ruhl Libre","GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+      //document.getElementById('v1').style.fontWeight = 700;
+    }
+  };
+
+  var bookInput = document.getElementById("bookInput");
+  var chapterInput = document.getElementById("chapterInput");
+  var verseInput = document.getElementById("verseInput");
+  var sourceList = ["","ESV","ESV","ESV","SBLGNT","WLC"]
+
+  bookInput.onchange = function(){
+    updateChapterList(getBookNum(bookInput.value));
+  };
+  chapterInput.onchange = function(){
+    updateVerseList(getBookNum(bookInput.value), chapterInput.value);
+  };
+
+  async function grekload() {
+    const { default: g } = await import('./greek.js')
+    grek = g
+    initialize()
+  }
+
+  async function hebrload() {
+    const { default: h } = await import('./hebrew.js')
+    hebr = h
+    initialize()
+  }
+  function removeOptions(selectElement) {
+   var i, L = selectElement.options.length - 1;
+   for(i = L; i >= 0; i--) {
+      selectElement.remove(i);
+   }
+  }
+
+  function hash(index) {
+    var num = parseInt(index)+100000000;
+    return num.toString(16).split("").reverse().join("");
+  }
+  
+  function unhash(hash) {
+    var intdex = parseInt(hash.split("").reverse().join(""), 16)-100000000;
+    return "00".concat(intdex.toString()).slice(-9);
+  }
+
+  function startTimer() {
+    
+    timer = clearInterval(timer);
+    var seconds = 0;
+    //var countdown = setInterval(function() {
+    timer = setInterval(function() {
+    seconds++;
+    document.getElementById("timer").textContent = (seconds/10).toFixed(1);
+    if (seconds >= 300) clearInterval(timer);
+    }, 100);
+  }
+
+  function readCookie() {
+    var allcookies = document.cookie;
+    //console.log(document.cookie);
+    // Get all the cookies pairs in an array
+    var cookiearray = allcookies.split(';');
+    var cookayy = {};
+    var name = "";
+    var value = "";
+    if (cookiearray[0] != "") {
+    // Now take key value pair out of this array
+    for(var i=0; i<cookiearray.length; i++) {
+      
+      name = cookiearray[i].split('=')[0].trim();
+      value = cookiearray[i].split('=')[1].trim();
+      cookayy[name] = value;
+    }
+    }
+    return cookayy;
+  }
+  
+  function initialize(p = getRandomVerse()) {
+    document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+    //'Authorization: Token 5f5ae66881bd4ab25ee64e64c6cec8e4903182bf' 'https://api.esv.org/v3/passage/text/?q=John+11:35'
+    //console.log(hash(p));
+    //console.log(unhash(hash(p)));
+    
+    //console.log(readCookie());
+    var cookayy = readCookie();
+
+    //if (!parseInt(readCookie().score)) {
+    if (!cookayy.score || cookayy.score == "" || cookayy.score == "NaN" || !parseInt(readCookie().score)) {
+      careerScore = 0;
+    }
+    else {
+      careerScore = parseInt(readCookie().score);
+    }
+
+    //console.log(careerScore, cookayy, cookayy.score);
+    document.getElementById('career').textContent = careerScore;
+    //console.log("Career score is now "+careerScore);
+    if (diff == 1) {
+      verse = easy_med.verses[Math.floor(Math.random() * (50-1) + 1)];
+      verse.hash = hash(verse.query);
+      //verse.passage_meta = '';
+      console.log(verse);
+      verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];
+      document.getElementById('v1').textContent = verse.passages;
+      startTimer();
+    }
+    else if (diff == 2) {
+      verse = easy_med.verses[Math.floor(Math.random() * (easy_med.verses.length-1) + 1)];
+      verse.hash = hash(verse.query);
+      //verse.passage_meta = '';
+      console.log(verse);
+      verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];        
+      document.getElementById('v1').textContent = verse.passages;
+      startTimer();
+    }
+    else if (diff == 3) {
+      fetch('https://api.esv.org/v3/passage/text/?q='
+            +p
+            +'&include-passage-references=false'
+            +'&include-verse-numbers=false'
+            +'&include-first-verse-numbers=false'
+            +'&include-footnotes=false'
+            +'&include-footnote-body=false'
+            +'&include-headings=false'
+            , {headers: {'Authorization': 'Token 5f5ae66881bd4ab25ee64e64c6cec8e4903182bf'}})    
+      .then(response => response.json())
+      .then(function(data) {
+        verse = JSON.parse(JSON.stringify(data));
+        verse.hash = hash(verse.query);
+        //verse.passage_meta = '';
+        console.log(verse);
+        data.passages[0] = data.passages[0].endsWith(" (ESV)") ? data.passages[0].substring(0,data.passages[0].length - 6) : data.passages[0];
+        document.getElementById('v1').textContent = data.passages;
+        })
+      .then(startTimer())
+    }
+    else if (diff == 4) {
+      verse = grek.verses[Math.floor(Math.random() * (grek.verses.length-1) + 1)];
+      verse.hash = hash(verse.query);
+      //verse.passage_meta = '';
+      console.log(verse);
+      document.getElementById('v1').textContent = verse.passages;
+      startTimer();
+    }
+    else if (diff == 5) {
+      verse = hebr.verses[Math.floor(Math.random() * (hebr.verses.length-1) + 1)];
+      verse.hash = hash(verse.query);
+      //verse.passage_meta = '';
+      console.log(verse);
+      document.getElementById('v1').textContent = verse.passages;
+      startTimer();
+    }
+    document.getElementById("answer").innerHTML = "";
+    document.getElementById("header").textContent = "Drillsword";
+    document.getElementById("src").innerHTML = sourceList[diff];
+    
+    removeOptions(bookInput);
+    for(var i = 1; i < bible.books.length; i++) {
+    var el = document.createElement("option");
+    el.textContent = bible.books[i].name;
+    el.value = el.textContent;
+    bookInput.appendChild(el);}
+    bookInput.onchange();
+    chapterInput.value = 1;
+    verseInput.value = 1;
+    
+    var rec = 0;
+    var recList = [];
+    for(var i = 1; i < recs.books.length; i++) {
+      if (recs.books[i].passage == verse.canonical.substring(0,verse.canonical.search(" [0-9]+:"))) {
+        console.log(i, recs.books[i].passage, verse.canonical);
+        recList.push(i);
+      }
+    }
+    rec = recList[Math.floor(Math.random() * (recList.length-1) + 1)];
+
+    document.getElementById("rec_title").innerHTML = '<a href="https://www.amazon.com'+recs.books[rec].dp+'" target = "_blank">'+recs.books[rec].title+'</a>'
+    //textContent = recs.books[rec].title;
+    document.getElementById("rec_img").src = recs.books[rec].img;
+    document.getElementById("rec_div").style.border = "thin solid #999999";
+    document.getElementById("rec_div").style.padding = "5px";
+    //document.getElementById("rec_img_div").href = recs.books[rec].href;
+
+  }
+
+  function updateChapterList(bookNum) {
+    var old = chapterInput.value;
+    removeOptions(chapterInput);
+    for(var i = 1; i <= bible.books[bookNum].chapterCount; i++) {
+    var el = document.createElement("option");
+    el.textContent = i;
+    el.value = i;
+    chapterInput.appendChild(el);}
+    //if (old <= chapterInput.options.length) 
+    chapterInput.value = old;
+    updateVerseList(bookNum, chapterInput.value);
+  }
+
+  function updateVerseList(bookNum, chapter) {
+    removeOptions(verseInput);
+    for(var i = 1; i <= bible.books[bookNum].verseCount[chapter]; i++) {
+    var el = document.createElement("option");
+    el.textContent = i;
+    el.value = i;
+    verseInput.appendChild(el);}
+  }
+
+  function getBookNum(bookName) {
+    for(var i = 1; i <= 66; i++) {
+      if (bible.books[i].name === bookName) return i;}
+  }
+
+  function getVerseIndex(b,c,v) {
+    return "00".concat(b.toString()).slice(-3)
+           +"00".concat(c.toString()).slice(-3)
+           +"00".concat(v.toString()).slice(-3);
+  }
+
+  function isValid(index) {
+    var b = parseInt(index.slice(0,3));
+      if (b > 66 || b < 1) {
+        return false;
+      }
+    var c = parseInt(index.slice(3,6));
+      if (c > bible.books[b].chapterCount || c < 1) {
+        return false;
+      }
+    var v = parseInt(index.slice(6,9));
+      if (v > bible.books[b].verseCount[c] || v < 1) {
+        return false;
+      }
+    for(var i = 0; i <= bible.esv_omitted_verses.length; i++) {
+      if (index == bible.esv_omitted_verses[i]) return false;}
+    return true;
+  }
+  
+  function getRandomVerse() {
+    var b = Math.floor(Math.random() * 66 + 1);
+    var c = Math.floor(Math.random() * bible.books[b].chapterCount + 1);
+    var v = Math.floor(Math.random() * bible.books[b].verseCount[c] + 1);
+    return getVerseIndex(b,c,v);
+  }
+  
+  refresh.onclick = function() {initialize();};
+  
+  share.onclick = function() {
+    var copyText = document.createElement("input");
+    document.body.appendChild(copyText);
+    copyText.value = "drillsword.com/?v="+verse.hash;
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); /*For mobile devices*/
+    document.execCommand("copy");
+    alert("Copied the text: " + copyText.value);
+    document.body.removeChild(copyText);
+  };
+
+  submit.onclick = function() {
+    timer = clearInterval(timer);
+    var scoreObj = {}
+    if (verse.query) {
+      document.getElementById("answer").innerHTML = '<a href="https://www.esv.org/'+verse.canonical+'" target = "_blank">'+verse.canonical+'</a>';
+      scoreObj = score(getVerseIndex(getBookNum(bookInput.value), chapterInput.value, verseInput.value),verse.query);
+      document.getElementById("header").textContent = "Drillsword score: "+ scoreObj.score;
+    }
+    if (scoreObj.score) {
+      //console.log(timer);
+      console.log("career: "+careerScore+" + "+scoreObj.score+" = "+(careerScore+scoreObj.score));
+      document.cookie = "score = "+(careerScore + scoreObj.score).toString();
+    }
+  };
+
+  function sumArray(a, b) {
+    return a + b;
+  }
+  function getVerseInt(index) {
+    var int = 0;
+    var b = parseInt(index.substring(0, 3));
+    var c = parseInt(index.substring(3, 6));
+    var v = parseInt(index.substring(6, 9));
+    for(var i = 1; i <= 66; i++) {
+      if (i < b) for(var j = 1; j <= bible.books[i].chapterCount; j++) int += bible.books[i].verseCount[j];
+      if (i === b) for(var j = 1; j <= bible.books[i].chapterCount; j++) if (j < c) int += bible.books[i].verseCount[j];
+    }
+    int += v;
+    return int;
+  }
+  function score(guess, answer) {
+    var bg = parseInt(guess.substring(0, 3));
+    var cg = parseInt(guess.substring(3, 6));
+    var vg = parseInt(guess.substring(6, 9));
+    
+    var b = parseInt(answer.substring(0, 3));
+    var c = parseInt(answer.substring(3, 6));
+    var v = parseInt(answer.substring(6, 9));
+    
+    var scoreObj = {};
+    scoreObj.score = 0;
+    if (b == bg) scoreObj.book = 10;
+
+    var diff = Math.abs(getVerseInt(guess)-getVerseInt(answer)).toString();
+    scoreObj.score = Math.max(0,Math.floor((10000-Math.pow(diff,1.5))/100));
+    
+    return scoreObj;
+  }
+</script>
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>
