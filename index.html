@@ -52,12 +52,13 @@
       <div class="one column" hidden>
         <h5 id="career">0</h5>
       </div>
-      <div class="seven columns" id="diff_div">
+      <div class="eight columns" id="diff_div">
         <input class="button-primary" type="submit" value="Easy" id="easy">
         <input class="button" type="submit" value="Medium" id="medium">
         <input class="button" type="submit" value="Hard" id="hard">
         <input class="button" type="submit" value="Κοινή" id="greek">
         <input class="button" type="submit" value="יהודית" id="hebrew">
+        <input class="button" type="submit" value="Latina" id="latin">
       </div>
       <div class="one column">
         <input class="button-primary" type="image" src="images/share-24px.svg" alt="submit" id="share" width="38" height="38">
@@ -141,8 +142,10 @@
   var diff = 0;
   var grkLoad = false;
   var hbrLoad = false;
+  var latLoad = false;
   var grek = {};
   var hebr = {};
+  var lat = {};
   // better scoring (use timer?) ; easy/med/hard ; playlists ; true random? ; fix cookies
 
   window.onload = (event) => {
@@ -163,6 +166,7 @@
   var diff3 = document.getElementById("hard");
   var diff4 = document.getElementById("greek");
   var diff5 = document.getElementById("hebrew");
+  var diff6 = document.getElementById("latin");
 
   diff1.onclick = function() {
     if (diff!=1)
@@ -173,6 +177,7 @@
       document.getElementById("hard").className = "button";
       document.getElementById("greek").className = "button";
       document.getElementById("hebrew").className = "button";
+      document.getElementById("latin").className = "button";
       initialize();
       document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
@@ -187,6 +192,7 @@
       document.getElementById("hard").className = "button";
       document.getElementById("greek").className = "button";
       document.getElementById("hebrew").className = "button";
+      document.getElementById("latin").className = "button";
       initialize();
       document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
@@ -201,6 +207,7 @@
       document.getElementById("hard").className = "button-primary";
       document.getElementById("greek").className = "button";
       document.getElementById("hebrew").className = "button";
+      document.getElementById("latin").className = "button";
       initialize();
       document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
@@ -219,6 +226,7 @@
       document.getElementById("hard").className = "button";
       document.getElementById("greek").className = "button-primary";
       document.getElementById("hebrew").className = "button";
+      document.getElementById("latin").className = "button";
       document.getElementById('v1').style.fontFamily = "GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
   };
@@ -236,15 +244,34 @@
       document.getElementById("hard").className = "button";
       document.getElementById("greek").className = "button";
       document.getElementById("hebrew").className = "button-primary";
+      document.getElementById("latin").className = "button";
       document.getElementById('v1').style.fontFamily = "Frank Ruhl Libre","GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
       //document.getElementById('v1').style.fontWeight = 700;
+    }
+  };
+
+  diff6.onclick = function() {
+    if (diff!=6)
+    {
+      diff=6;
+      if (lat = {}) {
+          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+          latload();
+      }
+      document.getElementById("easy").className = "button";
+      document.getElementById("medium").className = "button";
+      document.getElementById("hard").className = "button";
+      document.getElementById("greek").className = "button";
+      document.getElementById("hebrew").className = "button";
+      document.getElementById("latin").className = "button-primary";
+      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
   };
 
   var bookInput = document.getElementById("bookInput");
   var chapterInput = document.getElementById("chapterInput");
   var verseInput = document.getElementById("verseInput");
-  var sourceList = ["","ESV","ESV","ESV","SBLGNT","WLC"]
+  var sourceList = ["","ESV","ESV","ESV","SBLGNT","WLC","Vulgata"]
 
   bookInput.onchange = function(){
     updateChapterList(getBookNum(bookInput.value));
@@ -262,6 +289,12 @@
   async function hebrload() {
     const { default: h } = await import('./hebrew.js')
     hebr = h
+    initialize()
+  }
+
+  async function latload() {
+    const { default: l } = await import('./latin.js')
+    lat = l
     initialize()
   }
   function removeOptions(selectElement) {
@@ -382,6 +415,14 @@
     }
     else if (diff == 5) {
       verse = hebr.verses[Math.floor(Math.random() * (hebr.verses.length-1) + 1)];
+      verse.hash = hash(verse.query);
+      //verse.passage_meta = '';
+      console.log(verse);
+      document.getElementById('v1').textContent = verse.passages;
+      startTimer();
+    }
+    else if (diff == 6) {
+      verse = lat.verses[Math.floor(Math.random() * (lat.verses.length-1) + 1)];
       verse.hash = hash(verse.query);
       //verse.passage_meta = '';
       console.log(verse);

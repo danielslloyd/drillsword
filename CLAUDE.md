@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Drillsword** is a web-based Bible verse memorization and quiz application. Users are shown a Bible verse and must identify the book, chapter, and verse reference. The application supports multiple difficulty levels and languages including English (ESV), Greek (Koine), and Hebrew.
+**Drillsword** is a web-based Bible verse memorization and quiz application. Users are shown a Bible verse and must identify the book, chapter, and verse reference. The application supports multiple difficulty levels and languages including English (ESV), Greek (Koine), Hebrew, and Latin (Vulgata Clementina).
 
 ## Architecture
 
@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - `easy_med.js` - Pre-loaded ESV verses for easy/medium difficulty (50 verses for easy, ~500 for medium)
    - `greek.js` - Koine Greek New Testament verses (SBLGNT text)
    - `hebrew.js` - Hebrew Old Testament verses (WLC text)
+   - `latin.js` - Latin Vulgate verses (Vulgata Clementina, 31,434 verses)
    - `rec_obj.js` - Book recommendations (Amazon links) for each Bible book
    - `chapters/` - Pre-fetched verse data in JSON format, organized as `BBBCCC.json` (e.g., `001001.json` for Genesis 1)
 
@@ -31,9 +32,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Data Flow
 
 1. **Difficulty Modes**:
-   - Easy/Medium: Use pre-loaded `easy_med.js` data
-   - Hard: Fetch from ESV API (`https://api.esv.org/v3/passage/text/`)
-   - Greek/Hebrew: Lazy-load via dynamic imports when first selected
+   - Easy (diff=1): Use pre-loaded `easy_med.js` data (50 verses)
+   - Medium (diff=2): Use pre-loaded `easy_med.js` data (~500 verses)
+   - Hard (diff=3): Fetch from ESV API (`https://api.esv.org/v3/passage/text/`)
+   - Greek (diff=4): Lazy-load `greek.js` via dynamic imports when first selected
+   - Hebrew (diff=5): Lazy-load `hebrew.js` via dynamic imports when first selected
+   - Latin (diff=6): Lazy-load `latin.js` via dynamic imports when first selected
 
 2. **Scoring Algorithm** ([index.html:525-542](index.html#L525-L542))
    - Uses verse distance calculation (accounts for verse position in entire Bible)
@@ -114,8 +118,12 @@ This is a static HTML/CSS/JS application:
 - **Cookie Storage**: Career scores stored in `document.cookie` (no expiration set)
 - **Inline JavaScript**: All application logic in `<script type="module">` block starting at [index.html:137](index.html#L137)
 - **Timer Feature**: Hidden by default, tracks time for each verse (max 30 seconds)
-- **Attribution**: SBLGNT Greek text requires attribution per license (commented in code)
-- **Vulgate XML**: Large Latin Vulgate XML file present but not currently integrated into app
+- **Attribution**:
+  - SBLGNT Greek text requires attribution per license (commented in code)
+  - Vulgata Clementina is Public Domain
+- **Vulgate XML**: `SF_2014-02-26_LAT_VULGHETZENAUER_(VULGATA CLEMENTINA HETZENAUER EDITORE).xml` - source file for Latin mode
+  - Parsed by `parse_vulgate.js` to generate `latin.js`
+  - Only includes 66 Protestant canon books (deuterocanonical books excluded)
 
 ## File Organization
 
@@ -124,10 +132,13 @@ drillsword/
 ├── index.html          # Main application (HTML + JS)
 ├── bible_obj.js        # Bible structure metadata
 ├── easy_med.js         # Pre-loaded ESV verses
-├── greek.js            # Greek NT (lazy-loaded)
-├── hebrew.js           # Hebrew OT (lazy-loaded)
+├── greek.js            # Greek NT (lazy-loaded, ~4.5MB)
+├── hebrew.js           # Hebrew OT (lazy-loaded, ~4.3MB)
+├── latin.js            # Latin Vulgate (lazy-loaded, ~5.4MB)
 ├── rec_obj.js          # Book recommendations
 ├── chapters/           # Pre-fetched verse JSON files (Hebrew/Greek)
+├── parse_vulgate.js    # Script to generate latin.js from XML
+├── SF_2014-02-26_LAT_VULGHETZENAUER_*.xml  # Source Vulgate XML
 ├── css/
 │   ├── normalize.css
 │   └── skeleton.css
@@ -135,3 +146,17 @@ drillsword/
 ├── .htaccess           # Apache config for hosting
 └── GentiumBookPlus-Regular.woff2  # Font file
 ```
+
+## Regenerating Latin Data
+
+If you need to regenerate the `latin.js` file from the Vulgate XML:
+
+```bash
+node parse_vulgate.js
+```
+
+This will:
+- Parse the Vulgata Clementina XML file
+- Extract all 66 Protestant canon books (skipping deuterocanonical books)
+- Generate `latin.js` with 31,434 verses in the correct format
+- Map book names (handles "Psalm" vs "Psalms" naming difference)

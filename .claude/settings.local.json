@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node parse_vulgate.js:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
