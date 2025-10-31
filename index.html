@@ -29,22 +29,6 @@
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
 
-  <!-- Custom Styles
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <style>
-    /* Fix dropdown font size to prevent text clipping */
-    select {
-      font-size: 14px;
-      line-height: 1.6;
-      padding: 6px 10px;
-    }
-
-    select option {
-      font-size: 14px;
-      line-height: 1.6;
-    }
-  </style>
-
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="images/sword.png">
@@ -72,17 +56,29 @@
         <input class="button-primary" type="submit" value="Easy" id="easy">
         <input class="button" type="submit" value="Medium" id="medium">
         <input class="button" type="submit" value="Hard" id="hard">
-        <input class="button" type="submit" value="Κοινή" id="greek">
-        <input class="button" type="submit" value="יהודית" id="hebrew">
-        <input class="button" type="submit" value="Vulgata" id="latin">
       </div>
       <div class="one column">
         <input class="button-primary" type="image" src="images/share-24px.svg" alt="submit" id="share" width="38" height="38">
       </div>
     </div>
     <div class="row">
+      <div class="one column"></div>
+      <div class="eight columns" id="lang_div">
+        <input class="button-primary" type="submit" value="English" id="english">
+        <input class="button" type="submit" value="Κοινή" id="greek">
+        <input class="button" type="submit" value="יהודית" id="hebrew">
+        <input class="button" type="submit" value="Vulgata" id="latin">
+      </div>
+      <div class="one column"></div>
+    </div>
+    <div class="row">
       <div class="one-half column">
         <h4 id="answer"></h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="seven columns">
+        <h5 id="esv_translation" hidden></h5>
       </div>
     </div>
     <div class="row">
@@ -151,11 +147,12 @@
   -->
   <!--<script type="text/javascript" src="hebrew.js"></script>-->
                         <!--type="text/javascript">-->
-  <script type="module"> 
+  <script type="module">
   var verse = {};
   var timer = {};
   var careerScore = 0;
-  var diff = 0;
+  var difficulty = 1; // 1=easy, 2=medium, 3=hard
+  var language = 1; // 1=english, 2=greek, 3=hebrew, 4=latin
   var grkLoad = false;
   var hbrLoad = false;
   var latLoad = false;
@@ -166,7 +163,8 @@
 
   window.onload = (event) => {
     var param = window.location.search;
-    diff = 1;
+    difficulty = 1;
+    language = 1;
     console.log(param);
     var pos = param.search("/?v=");
     if (pos > -1 && isValid(unhash(param.slice(pos+2,pos+10)))) {
@@ -177,117 +175,114 @@
     }
   };
   
-  var diff1 = document.getElementById("easy");
-  var diff2 = document.getElementById("medium");
-  var diff3 = document.getElementById("hard");
-  var diff4 = document.getElementById("greek");
-  var diff5 = document.getElementById("hebrew");
-  var diff6 = document.getElementById("latin");
+  // Difficulty button handlers
+  var easyBtn = document.getElementById("easy");
+  var mediumBtn = document.getElementById("medium");
+  var hardBtn = document.getElementById("hard");
 
-  diff1.onclick = function() {
-    if (diff!=1)
-    {
-      diff=1;
+  // Language button handlers
+  var englishBtn = document.getElementById("english");
+  var greekBtn = document.getElementById("greek");
+  var hebrewBtn = document.getElementById("hebrew");
+  var latinBtn = document.getElementById("latin");
+
+  easyBtn.onclick = function() {
+    if (difficulty != 1) {
+      difficulty = 1;
       document.getElementById("easy").className = "button-primary";
       document.getElementById("medium").className = "button";
       document.getElementById("hard").className = "button";
-      document.getElementById("greek").className = "button";
-      document.getElementById("hebrew").className = "button";
-      document.getElementById("latin").className = "button";
       initialize();
-      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     }
   };
 
-  diff2.onclick = function() {
-    if (diff!=2)
-    {
-      diff=2;
+  mediumBtn.onclick = function() {
+    if (difficulty != 2) {
+      difficulty = 2;
       document.getElementById("easy").className = "button";
       document.getElementById("medium").className = "button-primary";
       document.getElementById("hard").className = "button";
-      document.getElementById("greek").className = "button";
-      document.getElementById("hebrew").className = "button";
-      document.getElementById("latin").className = "button";
       initialize();
-      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
-    }
-  };
-  
-  diff3.onclick = function() {
-    if (diff!=3)
-    {
-      diff=3;
-      document.getElementById("easy").className = "button";
-      document.getElementById("medium").className = "button";
-      document.getElementById("hard").className = "button-primary";
-      document.getElementById("greek").className = "button";
-      document.getElementById("hebrew").className = "button";
-      document.getElementById("latin").className = "button";
-      initialize();
-      document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
-    }
-  };
-  
-  diff4.onclick = function() {
-    if (diff!=4)
-    {
-      diff=4;
-      if (grek = {}) {
-          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
-          grekload();
-      }
-      document.getElementById("easy").className = "button";
-      document.getElementById("medium").className = "button";
-      document.getElementById("hard").className = "button";
-      document.getElementById("greek").className = "button-primary";
-      document.getElementById("hebrew").className = "button";
-      document.getElementById("latin").className = "button";
-      document.getElementById('v1').style.fontFamily = "GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
-    }
-  };
-  
-  diff5.onclick = function() {
-    if (diff!=5)
-    {
-      diff=5;
-      if (hebr = {}) {
-          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
-          hebrload();
-      }
-      document.getElementById("easy").className = "button";
-      document.getElementById("medium").className = "button";
-      document.getElementById("hard").className = "button";
-      document.getElementById("greek").className = "button";
-      document.getElementById("hebrew").className = "button-primary";
-      document.getElementById("latin").className = "button";
-      document.getElementById('v1').style.fontFamily = "Frank Ruhl Libre","GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
-      //document.getElementById('v1').style.fontWeight = 700;
     }
   };
 
-  diff6.onclick = function() {
-    if (diff!=6)
-    {
-      diff=6;
-      if (lat = {}) {
-          document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
-          latload();
-      }
+  hardBtn.onclick = function() {
+    if (difficulty != 3) {
+      difficulty = 3;
       document.getElementById("easy").className = "button";
       document.getElementById("medium").className = "button";
-      document.getElementById("hard").className = "button";
+      document.getElementById("hard").className = "button-primary";
+      initialize();
+    }
+  };
+
+  englishBtn.onclick = function() {
+    if (language != 1) {
+      language = 1;
+      document.getElementById("english").className = "button-primary";
       document.getElementById("greek").className = "button";
       document.getElementById("hebrew").className = "button";
-      document.getElementById("latin").className = "button-primary";
+      document.getElementById("latin").className = "button";
       document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+      initialize();
+    }
+  };
+
+  greekBtn.onclick = function() {
+    if (language != 2) {
+      language = 2;
+      if (Object.keys(grek).length === 0) {
+        document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+        grekload();
+      } else {
+        document.getElementById("english").className = "button";
+        document.getElementById("greek").className = "button-primary";
+        document.getElementById("hebrew").className = "button";
+        document.getElementById("latin").className = "button";
+        document.getElementById('v1').style.fontFamily = "GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+        initialize();
+      }
+    }
+  };
+
+  hebrewBtn.onclick = function() {
+    if (language != 3) {
+      language = 3;
+      if (Object.keys(hebr).length === 0) {
+        document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+        hebrload();
+      } else {
+        document.getElementById("english").className = "button";
+        document.getElementById("greek").className = "button";
+        document.getElementById("hebrew").className = "button-primary";
+        document.getElementById("latin").className = "button";
+        document.getElementById('v1').style.fontFamily = "Frank Ruhl Libre","GFS Didot","Amiri","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+        initialize();
+      }
+    }
+  };
+
+  latinBtn.onclick = function() {
+    if (language != 4) {
+      language = 4;
+      if (Object.keys(lat).length === 0) {
+        document.getElementById('v1').innerHTML = '<img src="images/loading_96.gif" alt="Loading...">'
+        latload();
+      } else {
+        document.getElementById("english").className = "button";
+        document.getElementById("greek").className = "button";
+        document.getElementById("hebrew").className = "button";
+        document.getElementById("latin").className = "button-primary";
+        document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
+        initialize();
+      }
     }
   };
 
   var bookInput = document.getElementById("bookInput");
   var chapterInput = document.getElementById("chapterInput");
   var verseInput = document.getElementById("verseInput");
-  var sourceList = ["","ESV","ESV","ESV","SBLGNT","WLC","Vulgata"]
+  var sourceList = ["","ESV","SBLGNT","WLC","Vulgata"]
 
   bookInput.onchange = function(){
     updateChapterList(getBookNum(bookInput.value));
@@ -299,18 +294,33 @@
   async function grekload() {
     const { default: g } = await import('./greek.js')
     grek = g
+    document.getElementById("english").className = "button";
+    document.getElementById("greek").className = "button-primary";
+    document.getElementById("hebrew").className = "button";
+    document.getElementById("latin").className = "button";
+    document.getElementById('v1').style.fontFamily = "GFS Didot","Amiri","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     initialize()
   }
 
   async function hebrload() {
     const { default: h } = await import('./hebrew.js')
     hebr = h
+    document.getElementById("english").className = "button";
+    document.getElementById("greek").className = "button";
+    document.getElementById("hebrew").className = "button-primary";
+    document.getElementById("latin").className = "button";
+    document.getElementById('v1').style.fontFamily = "Frank Ruhl Libre","GFS Didot","Amiri","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     initialize()
   }
 
   async function latload() {
     const { default: l } = await import('./latin.js')
     lat = l
+    document.getElementById("english").className = "button";
+    document.getElementById("greek").className = "button";
+    document.getElementById("hebrew").className = "button";
+    document.getElementById("latin").className = "button-primary";
+    document.getElementById('v1').style.fontFamily = "Amiri","GFS Didot","Frank Ruhl Libre","Raleway", "HelveticaNeue", "Helvetica Neue", "Arial", "sans-serif";
     initialize()
   }
   function removeOptions(selectElement) {
@@ -382,72 +392,99 @@
     //console.log(careerScore, cookayy, cookayy.score);
     document.getElementById('career').textContent = careerScore;
     //console.log("Career score is now "+careerScore);
-    if (diff == 1) {
-      verse = easy_med.verses[Math.floor(Math.random() * (50-1) + 1)];
-      verse.hash = hash(verse.query);
-      //verse.passage_meta = '';
-      console.log(verse);
-      verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];
-      document.getElementById('v1').textContent = verse.passages;
-      startTimer();
-    }
-    else if (diff == 2) {
-      verse = easy_med.verses[Math.floor(Math.random() * (easy_med.verses.length-1) + 1)];
-      verse.hash = hash(verse.query);
-      //verse.passage_meta = '';
-      console.log(verse);
-      verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];        
-      document.getElementById('v1').textContent = verse.passages;
-      startTimer();
-    }
-    else if (diff == 3) {
-      fetch('https://api.esv.org/v3/passage/text/?q='
-            +p
-            +'&include-passage-references=false'
-            +'&include-verse-numbers=false'
-            +'&include-first-verse-numbers=false'
-            +'&include-footnotes=false'
-            +'&include-footnote-body=false'
-            +'&include-headings=false'
-            , {headers: {'Authorization': 'Token 5f5ae66881bd4ab25ee64e64c6cec8e4903182bf'}})    
-      .then(response => response.json())
-      .then(function(data) {
-        verse = JSON.parse(JSON.stringify(data));
+
+    // Select verse based on language and difficulty
+    if (language == 1) { // English
+      if (difficulty == 1) { // Easy
+        verse = easy_med.verses[Math.floor(Math.random() * (50-1) + 1)];
         verse.hash = hash(verse.query);
-        //verse.passage_meta = '';
         console.log(verse);
-        data.passages[0] = data.passages[0].endsWith(" (ESV)") ? data.passages[0].substring(0,data.passages[0].length - 6) : data.passages[0];
-        document.getElementById('v1').textContent = data.passages;
-        })
-      .then(startTimer())
+        verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];
+        document.getElementById('v1').textContent = verse.passages;
+        startTimer();
+      }
+      else if (difficulty == 2) { // Medium
+        verse = easy_med.verses[Math.floor(Math.random() * (easy_med.verses.length-1) + 1)];
+        verse.hash = hash(verse.query);
+        console.log(verse);
+        verse.passages[0] = verse.passages[0].endsWith(" (ESV)") ? verse.passages[0].substring(0,verse.passages[0].length - 6) : verse.passages[0];
+        document.getElementById('v1').textContent = verse.passages;
+        startTimer();
+      }
+      else if (difficulty == 3) { // Hard - fetch from API
+        fetch('https://api.esv.org/v3/passage/text/?q='
+              +p
+              +'&include-passage-references=false'
+              +'&include-verse-numbers=false'
+              +'&include-first-verse-numbers=false'
+              +'&include-footnotes=false'
+              +'&include-footnote-body=false'
+              +'&include-headings=false'
+              , {headers: {'Authorization': 'Token 5f5ae66881bd4ab25ee64e64c6cec8e4903182bf'}})
+        .then(response => response.json())
+        .then(function(data) {
+          verse = JSON.parse(JSON.stringify(data));
+          verse.hash = hash(verse.query);
+          console.log(verse);
+          data.passages[0] = data.passages[0].endsWith(" (ESV)") ? data.passages[0].substring(0,data.passages[0].length - 6) : data.passages[0];
+          document.getElementById('v1').textContent = data.passages;
+          })
+        .then(startTimer())
+      }
     }
-    else if (diff == 4) {
-      verse = grek.verses[Math.floor(Math.random() * (grek.verses.length-1) + 1)];
+    else if (language == 2) { // Greek
+      var verseCount = grek.verses.length - 1;
+      var selectedIndex;
+      if (difficulty == 1) { // Easy - first 50 verses
+        selectedIndex = Math.floor(Math.random() * Math.min(50, verseCount)) + 1;
+      } else if (difficulty == 2) { // Medium - all verses (like old behavior)
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      } else { // Hard - random verse from entire collection
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      }
+      verse = grek.verses[selectedIndex];
       verse.hash = hash(verse.query);
-      //verse.passage_meta = '';
       console.log(verse);
       document.getElementById('v1').textContent = verse.passages;
       startTimer();
     }
-    else if (diff == 5) {
-      verse = hebr.verses[Math.floor(Math.random() * (hebr.verses.length-1) + 1)];
+    else if (language == 3) { // Hebrew
+      var verseCount = hebr.verses.length - 1;
+      var selectedIndex;
+      if (difficulty == 1) { // Easy - first 50 verses
+        selectedIndex = Math.floor(Math.random() * Math.min(50, verseCount)) + 1;
+      } else if (difficulty == 2) { // Medium - all verses
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      } else { // Hard - random verse from entire collection
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      }
+      verse = hebr.verses[selectedIndex];
       verse.hash = hash(verse.query);
-      //verse.passage_meta = '';
       console.log(verse);
       document.getElementById('v1').textContent = verse.passages;
       startTimer();
     }
-    else if (diff == 6) {
-      verse = lat.verses[Math.floor(Math.random() * (lat.verses.length-1) + 1)];
+    else if (language == 4) { // Latin
+      var verseCount = lat.verses.length - 1;
+      var selectedIndex;
+      if (difficulty == 1) { // Easy - first 50 verses
+        selectedIndex = Math.floor(Math.random() * Math.min(50, verseCount)) + 1;
+      } else if (difficulty == 2) { // Medium - all verses
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      } else { // Hard - random verse from entire collection
+        selectedIndex = Math.floor(Math.random() * verseCount) + 1;
+      }
+      verse = lat.verses[selectedIndex];
       verse.hash = hash(verse.query);
-      //verse.passage_meta = '';
       console.log(verse);
       document.getElementById('v1').textContent = verse.passages;
       startTimer();
     }
     document.getElementById("answer").innerHTML = "";
+    document.getElementById("esv_translation").innerHTML = "";
+    document.getElementById("esv_translation").hidden = true;
     document.getElementById("header").textContent = "Drillsword";
-    document.getElementById("src").innerHTML = sourceList[diff];
+    document.getElementById("src").innerHTML = sourceList[language];
     
     removeOptions(bookInput);
     for(var i = 1; i < bible.books.length; i++) {
@@ -556,6 +593,32 @@
       document.getElementById("answer").innerHTML = '<a href="https://www.esv.org/'+verse.canonical+'" target = "_blank">'+verse.canonical+'</a>';
       scoreObj = score(getVerseIndex(getBookNum(bookInput.value), chapterInput.value, verseInput.value),verse.query);
       document.getElementById("header").textContent = "Drillsword score: "+ scoreObj.score;
+
+      // If not in English mode, fetch and display ESV translation
+      if (language != 1) {
+        fetch('https://api.esv.org/v3/passage/text/?q='
+              +verse.query
+              +'&include-passage-references=false'
+              +'&include-verse-numbers=false'
+              +'&include-first-verse-numbers=false'
+              +'&include-footnotes=false'
+              +'&include-footnote-body=false'
+              +'&include-headings=false'
+              , {headers: {'Authorization': 'Token 5f5ae66881bd4ab25ee64e64c6cec8e4903182bf'}})
+        .then(response => response.json())
+        .then(function(data) {
+          var esvText = data.passages[0];
+          esvText = esvText.endsWith(" (ESV)") ? esvText.substring(0, esvText.length - 6) : esvText;
+          document.getElementById("esv_translation").textContent = esvText;
+          document.getElementById("esv_translation").hidden = false;
+        })
+        .catch(function(error) {
+          console.log("Error fetching ESV translation:", error);
+        });
+      } else {
+        // Hide ESV translation for English mode
+        document.getElementById("esv_translation").hidden = true;
+      }
     }
     if (scoreObj.score) {
       //console.log(timer);

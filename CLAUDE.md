@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Drillsword** is a web-based Bible verse memorization and quiz application. Users are shown a Bible verse and must identify the book, chapter, and verse reference. The application supports multiple difficulty levels and languages including English (ESV), Greek (Koine), Hebrew, and Latin (Vulgata Clementina).
+**Drillsword** is a web-based Bible reference quiz game. Users are shown a Bible verse and must guess the book, chapter, and verse reference. The application supports multiple difficulty levels and languages including English (ESV), Greek (Koine), Hebrew, and Latin (Vulgata Clementina).
 
 ## Architecture
 
@@ -31,22 +31,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Data Flow
 
-1. **Difficulty Modes**:
-   - Easy (diff=1): Use pre-loaded `easy_med.js` data (50 verses)
-   - Medium (diff=2): Use pre-loaded `easy_med.js` data (~500 verses)
-   - Hard (diff=3): Fetch from ESV API (`https://api.esv.org/v3/passage/text/`)
-   - Greek (diff=4): Lazy-load `greek.js` via dynamic imports when first selected
-   - Hebrew (diff=5): Lazy-load `hebrew.js` via dynamic imports when first selected
-   - Latin (diff=6): Lazy-load `latin.js` via dynamic imports when first selected
+1. **Difficulty and Language Selection**:
+   - **Difficulty levels** (independent of language):
+     - **Easy**: First 50 verses from the selected language dataset
+     - **Medium**: All verses from pre-loaded datasets (for English: ~500 verses from `easy_med.js`)
+     - **Hard**: For English, fetches random verses from ESV API; for other languages, uses full dataset
+   - **Languages** (independent of difficulty):
+     - **English (ESV)**: Pre-loaded in `easy_med.js`, API for hard mode
+     - **Greek (Κοινή)**: Lazy-loads `greek.js` (~4.5MB, SBLGNT text) on first selection
+     - **Hebrew (יהודית)**: Lazy-loads `hebrew.js` (~4.3MB, WLC text) on first selection
+     - **Latin (Vulgata)**: Lazy-loads `latin.js` (~5.4MB, Vulgata Clementina) on first selection
+   - **Default**: Easy difficulty + English language
+   - **ESV Translation Display**: For non-English modes, ESV translation is shown below the answer after submission
 
-2. **Scoring Algorithm** ([index.html:525-542](index.html#L525-L542))
+2. **Scoring Algorithm** ([index.html:625-642](index.html#L625-L642))
    - Uses verse distance calculation (accounts for verse position in entire Bible)
    - Score formula: `max(0, floor((10000 - distance^1.5) / 100))`
    - Career score persists via cookies
 
 3. **URL Sharing**
    - Uses `?v=` parameter with hashed verse index
-   - Hash function at [index.html:274-282](index.html#L274-L282)
+   - Hash function at [index.html:336-344](index.html#L336-L344)
 
 ## Development
 
@@ -70,7 +75,8 @@ This is a static HTML/CSS/JS application:
 
 ### API Integration
 
-- **ESV API** (Hard mode only):
+- **ESV API**:
+  - Used for: English Hard mode verse fetching + ESV translations in non-English modes
   - API key embedded in code: `5f5ae66881bd4ab25ee64e64c6cec8e4903182bf`
   - Endpoint: `https://api.esv.org/v3/passage/text/`
   - Parameters: `include-passage-references=false`, `include-verse-numbers=false`, etc.
@@ -115,8 +121,12 @@ This is a static HTML/CSS/JS application:
 
 ## Important Notes
 
+- **Game Mechanics**: This is a reference-guessing quiz game, not a memorization tool
+- **UI Layout**:
+  - Two independent control rows: Difficulty (Easy/Medium/Hard) and Language (English/Greek/Hebrew/Latin)
+  - ESV translation displayed below answer for non-English modes
 - **Cookie Storage**: Career scores stored in `document.cookie` (no expiration set)
-- **Inline JavaScript**: All application logic in `<script type="module">` block starting at [index.html:137](index.html#L137)
+- **Inline JavaScript**: All application logic in `<script type="module">` block starting at [index.html:154](index.html#L154)
 - **Timer Feature**: Hidden by default, tracks time for each verse (max 30 seconds)
 - **Attribution**:
   - SBLGNT Greek text requires attribution per license (commented in code)

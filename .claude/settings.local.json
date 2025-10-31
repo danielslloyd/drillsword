@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node parse_vulgate.js:*)"
+      "Bash(node parse_vulgate.js:*)",
+      "Bash(start http://localhost:8000)",
+      "Bash(npx -y serve@14 -l 8000 .)",
+      "Bash(timeout 3 bash:*)"
     ],
     "deny": [],
     "ask": []
